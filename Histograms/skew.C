@@ -4,26 +4,27 @@
 Double_t MyMethod(Double_t *x, Double_t *par)
 {
 
-	Double_t exponent = ((-((x[0] - par[2])/par[3]) - par[0]) * (-((x[0] - par[2])/par[3]) - par[0])) / (2 * par[1] * par[1]);
+	Double_t exponent = (-1* (((x[0] - par[2])/par[3]) - par[0]) * (((x[0] - par[2])/par[3]) - par[0])) / (2 * par[1] * par[1]);
 	Double_t erf_top_limit = par[4] * (x[0] - par[2]) / (par[3] * TMath::Sqrt(2));
-	Double_t function = (1 / (par[3] * par[1] * TMath::Sqrt(2 * TMath::Pi()))) * TMath::Exp(exponent) * (1 + TMath::Erf(erf_top_limit));
+	Double_t function = par[5] * (1 / (par[3] * par[1] * TMath::Sqrt(2 * TMath::Pi()))) * TMath::Exp(exponent) * (1 + TMath::Erf(erf_top_limit));
 
 	return function;
 
 }
-int main()
+
+void maincode()
 {
 	//Normal Histogram Stuff
 	//gStyle->SetOptTitle(1);
 	//gStyle->SetOptStat(0);
 	TCanvas* c1 = new TCanvas("c1", "", 20, 20, 1000, 1000);
-	c1->Divide(1,2);
+	c1->Divide(1,1);
 	c1->cd(1);
 
 	TString filename = "~/Vincent/G4CATS/Out/B4_200MeV.root";
 	TFile *f = TFile::Open(filename);
 
-	TH1F* h1 = new TH1F("Histogram Statistics", "", 300, 180, 210);
+	TH1F *h1 = new TH1F("h1", "", 300, 180, 210);
 
 	TTreeReader r1("B4", f);
 	TTreeReaderValue<Double_t> Ecore(r1, "Ecore");
@@ -51,35 +52,33 @@ int main()
   	Double_t CenterPeak = h1->GetBinCenter(BinWithMostCounts);
 	Double_t StdDev = h1->GetStdDev();
 
-	c1->cd(2);
+	TF1 *graph_function = new TF1("graph_function", MyMethod, 180, 210, 6);
 
-	TF1 *graph_function = new TF1("graph_function", MyMethod, 180, 210, 5);
-
-	//0 is the mean; 1 is the standard deviation; 2 is E; 3 is w; 4 is a (the shape parameter)
-	graph_function->SetParameter(0, CenterPeak);
+	//0 is the mean; 1 is the standard deviation; 2 is E; 3 is w; 4 is a (the shape parameter); 5 is the height
+	graph_function->SetParameter(0, 0);
 	graph_function->SetParameter(1, StdDev);
-	graph_function->SetParameter(2, 0);
+	graph_function->SetParameter(2, CenterPeak);
 	graph_function->SetParameter(3, 1);
-	graph_function->SetParameter(4, -10);
- 
-	//These parameters must be the same as those set to the TF1 function above
-/*	Double_t parameters[5] = {CenterPeak, StdDev, 0, 1, -10};
+	graph_function->SetParameter(4, -8);
+	graph_function->SetParameter(5, 1);
 
+	//Scaling
+	Double_t max_of_function = graph_function->GetMaximum();
+	Double_t scale_factor = MaxYValue/max_of_function;
+	graph_function->SetParameter(5, scale_factor);
+
+	h1->Fit("graph_function");
 	
-
-	Double_t max = 14000;
-	Double_t haha = 199.95;
-	Double_t b = MyMethod2(MyMethod1, &haha, parameters);
-	cout << b << endl;
-	Double_t c = (max / b);
-	cout << c << endl;
-	lol->SetParameter(0, c);
-*/	
-	
-
-	graph_function->Draw("SAME");
-
-	return 0;
-	
+	Double_t parameter0 = graph_function->GetParameter(0);
+	cout << parameter0 << endl;
+	Double_t parameter1 = graph_function->GetParameter(1);
+	cout << parameter1 << endl;
+	Double_t parameter2 = graph_function->GetParameter(2);
+	cout << parameter2 << endl;
+	Double_t parameter3 = graph_function->GetParameter(3);
+	cout << parameter3 << endl;
+	Double_t parameter4 = graph_function->GetParameter(4);
+	cout << parameter4 << endl;
+	Double_t parameter5 = graph_function->GetParameter(5);
+	cout << parameter5 << endl;
 }
-

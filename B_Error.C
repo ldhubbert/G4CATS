@@ -91,10 +91,10 @@ void maincode()
 	unsmeared->Draw("AP");
 
 	//Fit exponential decay curve to smeared data
-	//Third parameter means there is one parameter (par[0] in the Double_t method at the top of the code)
+	//Fifth parameter means there is one parameter (par[0] in the Double_t method at the top of the code)
 	//The computer will give us the best par[0] value for this fit
-	TF1 *f1 = new TF1("fit_function", fit_function, 0, 1, 1);
-	smeared->Fit("fit_function");
+	TF1 *f1 = new TF1("f1", fit_function, 0, 1, 1);
+	smeared->Fit("f1");
 
 	//Print parameter on screen:
 	gStyle->SetOptFit(111);

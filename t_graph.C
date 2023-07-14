@@ -25,16 +25,22 @@ void maincode()
 	//Here, the y_values correspond to the t values
 	Double_t y_values[array_size];
 
-	for (int x = 20; x <= 160; x = x + 20)
+	for (int i = 20; i <= 160; i = i + 20)
 	{
 		//This is to pass a double into t
 		//Also, change from degrees to radians for the TMath::Cos statement to work
-		Double_t double_x = static_cast<Double_t>(x) * (TMath::Pi() / 180);
+		Double_t double_i = static_cast<Double_t>(i) * (TMath::Pi() / 180);
 		//So array starts numbering at 0
-		int array_numbering = (static_cast<Double_t>(x)/20) - 1;
-		x_values[array_numbering] = x;
-		y_values[array_numbering] = t_graph(&double_x)/1000000;
+		int array_numbering = (i/20) - 1;
+		x_values[array_numbering] = i;
+		y_values[array_numbering] = t_graph(&double_i)/1000000;
+
+		cout << x_values[array_numbering] << endl;
 	}
+
+	cout << "///" << endl;
+	cout << x_values[0] << endl;
+	cout << x_values[1] << endl;
 
 	TGraph *g1 = new TGraph(array_size, x_values, y_values);
 	g1->SetTitle("t vs. Theta for a 1000MeV Incident Photon Beam");

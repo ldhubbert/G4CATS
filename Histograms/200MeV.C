@@ -1,17 +1,5 @@
-#include "TMath.h"
-Double_t MyMethod(Double_t *x, Double_t *par)
-{
-	Double_t a = x[0];
-	Double_t func = par[0] * ((1/(par[2]*TMath::Sqrt(2*TMath::Pi()))) * TMath::Power(TMath::E(), -0.5*((a-par[1])/par[2])*((a-par[1])/par[2])));
-
-	return func;
-}
-
 void maincode()
 {
-	//Normal Histogram Stuff
-	//gStyle->SetOptTitle(1);
-	//gStyle->SetOptStat(0);
 	TCanvas* c1 = new TCanvas("c1", "", 20, 20, 1000, 1000);
 	c1->Divide(1,1);
 	c1->cd(1);
@@ -37,51 +25,9 @@ void maincode()
 
   	h1->GetXaxis()->SetTitle("Energy (MeV)");
   	h1->GetYaxis()->SetTitle("Counts");
-  	h1->SetTitle("Energy Recorded by G4 CATS sim -- 200MeV Photon Beam");
-	h1->Draw();
-
-  	//Start of FWHM Section
-  	//Creating a Skewed Gaussian Function
-  	Double_t BinWithMostCounts = h1->GetMaximumBin();
-  	Double_t MaxYValue = h1->GetBinContent(BinWithMostCounts);
-  	Double_t CenterPeak = h1->GetBinCenter(BinWithMostCounts);
-	Double_t StdDev = h1->GetStdDev();
-
-  	//testing Integral function
-  	//TF1 *test = new TF1("test", "cos(x)", 0, 10);
-  	//Double_t a = test->TF1::Integral(2,4);
-  	//cout << a << endl;
-
-  	//Skewed Gaussian Formula
-  	//TF1 *integral_function = new TF1("integral_function", "TMath::Power(TMath::E(), -1*x[0]*x[0])", -1*TMath::Infinity(), TMath::Infinity());
-  	//TF1 *f1 = new TF1("f1", "((2 * TMath::Power(TMath::E(),(TMath::Power((-((x[0] - [0])/[2]) - [3]),2))/(2*TMath::Power([4],2))) * (1 + 2/TMath::Sqrt(TMath::Pi()) * integral_function->Integral(0,([5]*(x[0] - [0]))/([2]*TMath::Sqrt(2))))", 180, 210);
-  	//f1->SetParameter(1, 200);
-  	//f1->SetParameter(2, 200);
-  	//f1->SetParameter(3, MaxYValue);
-  	//f1->SetParameter(4, h1->GetStdDev());
-  	//f1->SetParameter(5, -10);
-  	//f1->Draw("SAME");
-  
-  	//Trying out TwoBody strategy
-  	TF1 *lol = new TF1("lol", MyMethod, 180, 210, 3);
-	lol->SetParameter(0, 1);
-  	lol->SetParameter(1, CenterPeak);
-	//lol->SetParameter(2, StdDev);
-	lol->SetParameter(2, 1);
- 
-	//These parameters must be the same as those set to the TF1 function above
-	Double_t parameters[3] = {1,CenterPeak,1};
-
-	Double_t b = MyMethod(&CenterPeak, parameters);
-	cout << b << endl;
-	Double_t c = (MaxYValue / b);
-	cout << c << endl;
-	lol->SetParameter(0, c);
-	
-	
-
-	lol->Draw("SAME");
-
-	
+	h1->GetXaxis()->CenterTitle();
+	h1->GetYaxis()->CenterTitle();
+  	h1->SetTitle("200MeV Incident Beam");
+	h1->Draw();	
 }
 

@@ -1,4 +1,8 @@
 #include <TMath.h>
+#include <TCanvas.h>
+#include <TGraph2D.h>
+#include <TStyle.h>
+void maincode()
 {
 	//Code From 100MeV Smear
 	//Gaussian and Filling Histogram
@@ -417,22 +421,47 @@
 	Double_t FinalWidth_5 = FWHMRightXValue_5 - FWHMLeftXValue_5;
 	Double_t FWHM_5 = (FinalWidth_5/500)*100;
 	cout << FWHM_5 << endl;
-
-
-
-
-
-
-
-
-
-
-
-
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	//END
 	TCanvas* c1 = new TCanvas("c1", "", 20, 20, 1000, 1000);
 	c1->Divide(1,1);
 	c1->cd(1);
+
+	Int_t array_size = 5;
+	Double_t x_values[array_size];
+	Double_t y_values[array_size];
+	Double_t z_values[array_size];
+
+	x_values[0] = 100;
+	x_values[1] = 200;
+	x_values[2] = 300;
+	x_values[3] = 400;
+	x_values[4] = 500;
+
+	y_values[0] = FWHM;
+	y_values[1] = FWHM_2;
+	y_values[2] = FWHM_3;
+	y_values[3] = FWHM_4;
+	y_values[4] = FWHM_5;
+
+	z_values[0] = 7;
+	z_values[1] = 9;
+	z_values[2] = 11;
+	z_values[3] = 13;
+	z_values[4] = 15;
+
+	TGraph2D *g1 = new TGraph2D(array_size, x_values, y_values, z_values);
+	g1->SetTitle("Smearing factor for FWHM of various Energy Levels");
+	g1->GetXaxis()->SetTitle("Energy (in MeV)");
+	g1->GetYaxis()->SetTitle("FWHM (in % of incident energy)");
+	g1->GetZaxis()->SetTitle("Percentage");
+	gStyle->SetPalette(1);
+
+	g1->Draw();
+
+
 
 
 }
